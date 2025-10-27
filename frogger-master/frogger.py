@@ -46,6 +46,7 @@ agua_sound = pygame.mixer.Sound('./sounds/agua.wav')
 chegou_sound = pygame.mixer.Sound('./sounds/success.wav')
 trilha_sound = pygame.mixer.Sound('./sounds/guimo.wav')
 
+
 # --- Classes ---
 class Object():
     def __init__(self, position, sprite):
@@ -70,6 +71,7 @@ class Frog(Object):
         self.can_move = 1
         self.score = 0
         self.highest_position = position[1]
+        self.stack_count = 0  # FOR STACK ATTRIBUTE
 
     def updateSprite(self, direction):
         if self.way != direction:
@@ -129,6 +131,8 @@ class Frog(Object):
     def frogDead(self, game):
         self.setPositionToInitialPosition()
         self.decLives()
+        if frog.stack_count > 0:  # STACK 3
+            frog.stack_count -= 1
         game.resetTime()
         self.animation_counter = 0
         self.animation_tick = 1
@@ -139,6 +143,10 @@ class Frog(Object):
         current_sprite = self.animation_counter * 30
         screen.blit(self.sprite, (self.position[0], self.position[1] + camera_offset),
                     (0 + current_sprite, 0, 30, 30 + current_sprite))
+        for i in range(self.stack_count):  # STACKING ON TOP OF MAIN FROG FOR EVERY STOP
+            y_offset = self.position[1] - (i + 1) * 12
+            screen.blit(self.sprite, (self.position[0], y_offset + camera_offset),
+                        (0 + current_sprite, 0, 30, 30 + current_sprite))
 
     def rect(self):
         return Rect(self.position[0], self.position[1], 30, 30)
@@ -289,6 +297,7 @@ def checkVerticalLoop(frog, game):
         game.incLevel()
         game.incSpeed()
         game.incPoints(50)
+        frog.stack_count += 1  # INCREASE STACK COUNT
 
 
 # --- Main ---
@@ -364,15 +373,16 @@ while True:
         text_info1 = info_font.render(f'Level: {game.level}  Points: {game.points}', 1, (255, 255, 255))
         text_info2 = info_font.render(f'Time: {game.time}   Lifes: {frog.lives}', 1, (255, 255, 255))
         text_info3 = info_font.render(f'Distance: {frog.score}', 1, (255, 255, 255))
+
         screen.blit(text_info1, (10, 520))
         screen.blit(text_info2, (250, 520))
         screen.blit(text_info3, (10, 500))
 
         drawList(enemys, -camera_y)
         drawList(plats, -camera_y)
+
         frog.animateFrog(key_pressed, key_up)
         frog.draw(-camera_y)
-
         destroyOffscreen(enemys)
         destroyOffscreen(plats)
 
