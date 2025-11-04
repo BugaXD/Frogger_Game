@@ -46,7 +46,6 @@ agua_sound = pygame.mixer.Sound('./sounds/agua.wav')
 chegou_sound = pygame.mixer.Sound('./sounds/success.wav')
 trilha_sound = pygame.mixer.Sound('./sounds/guimo.wav')
 
-
 # --- Classes ---
 class Object():
     def __init__(self, position, sprite):
@@ -373,7 +372,6 @@ while True:
         text_info1 = info_font.render(f'Level: {game.level}  Points: {game.points}', 1, (255, 255, 255))
         text_info2 = info_font.render(f'Time: {game.time}   Lifes: {frog.lives}', 1, (255, 255, 255))
         text_info3 = info_font.render(f'Distance: {frog.score}', 1, (255, 255, 255))
-
         screen.blit(text_info1, (10, 520))
         screen.blit(text_info2, (250, 520))
         screen.blit(text_info3, (10, 500))
@@ -383,6 +381,7 @@ while True:
 
         frog.animateFrog(key_pressed, key_up)
         frog.draw(-camera_y)
+
         destroyOffscreen(enemys)
         destroyOffscreen(plats)
 
